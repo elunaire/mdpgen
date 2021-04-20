@@ -1,22 +1,26 @@
-<html>
-
-<head>
-<title>GENERATEUR DE MOTS DE PASSES</title>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Passwords calculator</title>
 <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<meta name="description" content="Generer et Memoriser des mots de passes, Generate password, Generacion de contrasena">
-	<meta name="keywords" content="generer, regenerer, mot, mots, de, passe, generate, password, generation, automatique, contrasena, automanica, automatique, generation, automatique">
+  <link rel="stylesheet" href="http://mdpgen.free.fr/en/mdpgen_v-eng_fichiers/bootstrap.css">
+  <script src="http://mdpgen.free.fr/en/mdpgen_v-eng_fichiers/jquery.js"></script>
+  <script src="http://mdpgen.free.fr/en/mdpgen_v-eng_fichiers/bootstrap.js"></script>
+<meta name="description" content="reCalculate, or (re) generate passwords list with data that you have in mind ">
+	<meta name="keywords" content="passwords, manager, security, generate, password, passwords, list, save">
 	<meta name="author" content="E. Lunaire">
 	
-<script src="prng_pmse_base32.js"></script>	
-<script src="vendor.js"></script>
-<script src="patternlock.js"></script>
+
+
+<script src="http://mdpgen.free.fr/en/mdpgen_v-eng_fichiers/prng_pmse_base32.js"></script>	
+<script src="http://mdpgen.free.fr/en/mdpgen_v-eng_fichiers/vendor.js"></script>
+<script src="http://mdpgen.free.fr/en/mdpgen_v-eng_fichiers/patternlock.js"></script>
+
+
  	
 	
-<SCRIPT LANGUAGE="JavaScript">
+<script language="JavaScript">
+
 // compute Hash function on a 32 bits register
 function hash32(tmp){ 
   var hash = 0, i, chr;
@@ -28,6 +32,8 @@ function hash32(tmp){
   }
   return Math.abs(hash);
 }
+
+
 function MyMdp(){
 	
 	var mdp1 = document.getElementById("pwd").value;
@@ -35,6 +41,7 @@ function MyMdp(){
 	mdp1 = hash32(mdp2).toString(32) + mdp1;
 	mdp2 = hash32(mdp1).toString(32) + mdp2;
 	var tcm = document.getElementById("tailleperso").value;	
+    var Lpass = parseInt(document.getElementById("L_pass").value);	
 	
 	//var l_numbers = document.getElementById("myRange").value;
 	
@@ -53,111 +60,151 @@ function MyMdp(){
 	var l_numbers = document.getElementById("taillemdpliste").value;	
 	
 	
+
 		
 	
-	// add index 1, 2, 3... N to column0 of table
+	
+	
+	// add N password to column1 of table
+	var res = PRNG_base32(mdp1, mdp2, iv, (6 + Lpass)*l_numbers +1, (6 + Lpass) ) ;
+	
+	document.getElementById("myTD").innerText = res;
+
+    const lines = (res.match(/\n/g) || '').length ;
+
+    // add index 1, 2, 3... N to column0 of table
 	var i, num_txt="";
-	for (i = 1; (i-1) < l_numbers; i++) {
+	for (i = 1; (i-1) < lines; i++) {
 		num_txt += i.toString() + "\n";
 	}
 	document.getElementById("myTDnum").innerText = num_txt;
-	
-	// add N password to column1 of table
-	var res = PRNG_base32(mdp1, mdp2, iv, 8*l_numbers + 1 ) ;
-	
-	document.getElementById("myTD").innerText = res;
+
+
 	
   
 	
 }
+
+
+
+
 function MyPattern(){ 
 	var pattern = p.getPattern();
 	document.getElementById("val_schema").value = pattern;	
 }
-</SCRIPT>
+
+
+
+</script>
+
 </head>
+
+
 <body>
+
 <div class="container">
   <div class="jumbotron">
-    <h1>MOTS DE PASSES</h1>
-    <p> (Re)G&eacute;n&eacute;rer une liste de mots de passes robustes que vous pouvez retrouver ! 	</p> 
-    <p align="center">  <a href="http://mdpgen.free.fr/en/">EN</a> - <a href="http://mdpgen.free.fr/"> FR</a>   </p> 
+    <h1>Your Passwords List</h1>
+    <p> (Re) Generate a list of strong passwords you can find again and again with parameters that you have in mind ! 	</p> 
+    <p align="center"> <a href="http://mdpgen.free.fr/"> FR</a>  - <a href="http://mdpgen.free.fr/en/">EN</a> 
+		</p>
   </div>
   <div class="row">
 	
+
    <div class="col-sm-4">
-      <h3>Cr&eacute;ation d'une liste de mots de passes (reg&eacute;n&eacute;rable à l'identique)</h3>
-        <p> Surnom d'un proche (ou mot de passe simple) ? <input type="text"  size="25" maxlength="64" style="text-align:center; color: blue; backgfloor:#FFFFFF; font-size:17;" id="pwd" />
+      <h3>Creation of a list of passwords (regenerable identically)</h3>
+        <p> Nickname, pet name  or simple password ? <input type="text" size="25" maxlength="64" style="text-align:center; color: blue; backgfloor:#FFFFFF; font-size:17;" id="pwd">
 		</p>
-		<p> Une Date (ex : anniversaire d'un proche) ? <input type="date" id="dateperso" name="dateperso">
+		<p> Date (ex: event, birthday, etc.)? <input type="date" id="dateperso" name="dateperso">
 		</p>
-		<p> Une taille en cm (ex : votre taille à vous) ? <input type="number" id="tailleperso" name="tailleperso">
+		<p> A size in cm (ex: size of someone)?<input type="number" id="tailleperso" name="tailleperso">
 		</p>
-		<p> Une sch&eacute;ma de v&eacute;rrouilage que vous retiendrez ? 
+		<p> Locking pattern that you will remember ? 
 		</p>
 		<p>     
            <svg class="patternlock" id="lock" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
             <g class="lock-actives"></g>
             <g class="lock-lines"></g>
             <g class="lock-dots">
-                <circle cx="20" cy="20" r="2"/>
-                <circle cx="50" cy="20" r="2"/>
-                <circle cx="80" cy="20" r="2"/>
-                <circle cx="20" cy="50" r="2"/>
-                <circle cx="50" cy="50" r="2"/>
-                <circle cx="80" cy="50" r="2"/>
-                <circle cx="20" cy="80" r="2"/>
-                <circle cx="50" cy="80" r="2"/>
-                <circle cx="80" cy="80" r="2"/>
+                <circle cx="20" cy="20" r="2"></circle>
+                <circle cx="50" cy="20" r="2"></circle>
+                <circle cx="80" cy="20" r="2"></circle>
+
+                <circle cx="20" cy="50" r="2"></circle>
+                <circle cx="50" cy="50" r="2"></circle>
+                <circle cx="80" cy="50" r="2"></circle>
+
+                <circle cx="20" cy="80" r="2"></circle>
+                <circle cx="50" cy="80" r="2"></circle>
+                <circle cx="80" cy="80" r="2"></circle>
             </g>
 			<svg>
-		</p>
-		<p> Sch&eacute;ma : <input type="text"  size="10" maxlength="64" readonly id="val_schema" />
-		<input type="button" style="font-size:12; font-family: impact;" value="Voir" onClick="MyPattern()"/>
+		</svg></svg></p>
+		<p> Schéma : <input type="text" size="10" maxlength="64" readonly="readonly" id="val_schema">
+		<input type="button" style="font-size:12; font-family: impact;" value="Voir" onclick="MyPattern()">
 		</p>
 		<p>
 		</p>
 		
     
+
+
+
+
     
+
 	</div>
 	<div class="col-sm-4">
-      <h3>Liste des mots de passes</h3>
-	  	<p><input type="button" style="font-size:15; font-family: impact;" value="(Re) Calculer les mots de passes" onClick="MyMdp()"/>
+      <h3>List of passwords</h3>
+	  	<p><input type="button" style="font-size:15; font-family: impact;" value="(Re) Calculate passwords" onclick="MyMdp()">
 		</p>
+
 		<p>   
 		 
-		<table id="tableOut"  style="width:100%">
-			<tr id="myTr">
-				<td vAlign id="myTDnum" >
+		<table id="tableOut" style="width:100%">
+			<tbody><tr id="myTr">
+				<td id="myTDnum" valign="">
 					
 				</td>
-				<td vAlign id="myTD"></td>
+				<td id="myTD" valign=""></td>
 				
 			</tr>
-  		</table>		
+  		</tbody></table>	
+        <p> Lenght of passwords (>10 characters):
+        <select name="L_pass" id="L_pass">
+            <option value="2">15+</1option>
+            <option value="6">20+</option>
+            <option value="10">25+</option>
+            <option value="14">35+</option>
+            
+        </select>
+        	
 		</p>
-		<p> Nombre de mots de passes (extensible) <input type="number" value="10" id="taillemdpliste" name="taillemdpliste">
+		<p> Number of passwords (expandable: [10-10 000])<input type="number" value="10" id="taillemdpliste" name="taillemdpliste">
 		
 		</p>
+
 	</div>
 	
+
 	
 	<div class="col-sm-4">
-      <h3>Utilisations</h3>
-		<p> 1. Entrer un nom de code (un pseudo, surnom, mot de passe etc.)  <p/>
-		<p> 2. Entrer une date que vous connaissez.  <p/>
-		<p> 3. Entrer votre taille ou un nombre que vous connaissez.  <p/>
-		<p> 4. Entrer un sch&eacute;ma de v&eacute;rrouilage que vous retiendrez.  <p/>
-		<p> => Avec ces mêmes champs que vous retiendrez, la liste extensible des mots de passes g&eacute;n&eacute;r&eacute;s sera toujours identique.<p/>
-		<p> NB : chaque mot de passe de la liste est utilisable temporairement en retenant son indice... <p/>
-	 <h3>Informations</h3>
-		<p> Le nombre de combinaisons d'entr&eacute;es possibles de ce calculateur d&eacute;passe largement 10 milliards. 
-		Le G&eacute;n&eacute;rateur de mots de passes utilise un g&eacute;n&eacute;rateur particulier de nombre pseudo-al&eacute;atoire (PRNG).
-		 Celui-ci admet des entr&eacute;es de tailles non bornées (un espace de graines non born&eacute;). 
-		<p> (Plus d'info : <a href="http://blocksnet.free.fr/PRNG/">PULS-PRNG</a>). <p/>
-	</div>   
+      <h3>Help</h3>
+		<p> 1. Enter a code name (a nickname, nickname, password etc.)  </p><p>
+		</p><p> 2. Enter a date you know.  </p><p>
+		</p><p> 3. Enter your height or a number you know.  </p><p>
+		</p><p> 4. Enter a locking scheme that you will remember. </p><p>
+		</p><p> =&gt; With these same fields that you will remember, the expandable list of generated passwords will always be the same..</p><p>
+		</p><p> NB : each password in the list can be used temporarily by retaining its hint.... </p><p>
+	 </p><h3>Information</h3>
+		<p> The number of possible input combinations of this calculator greatly exceeds 10 billion.
+The Password Generator uses a special pseudo-random number generator (PRNG).
+This one admits inputs of unbounded sizes (an unbounded space of seeds). 
+		</p><p> (More information: <a href="http://blocksnet.free.fr/PRNG/">PULS-PRNG</a>). </p><p>
+	</p></div>   
 </div>
+
 <script>
     var e = document.getElementById('lock')
     var p = new PatternLock(e, {
@@ -165,12 +212,22 @@ function MyPattern(){
             this.success()
         }
     });
+
 </script>
+
+
+
 	
+
+
  <footer class="footer">
+        <p align="center"> Git -> <a href="https://github.com/elunaire/mdpgen">github.com/elunaire/mdpgen</a>  </p>
         <p align="center"> _______________________________________________________ </p>
-		<p align="center"> Investissement <a href="https://r.kraken.com/W764n" >Cryptos & Bitcoin ?</a> Il est temps de s'y mettre sur <a href="https://r.kraken.com/W764n" >kraken.com</a> !
+		<p align="center"> <a href="https://r.kraken.com/W764n">Cryptos &amp; Bitcoin ?</a> It's time to invest on <a href="https://r.kraken.com/W764n">kraken.com</a> the most secure platform!
 		</p>
 	  </footer>
-</body>
-</html>
+
+
+
+
+</div></body></html>
